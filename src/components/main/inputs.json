@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "type": "text",
+    "txt": "First Name"
+  },
+  {
+    "id": 2,
+    "type": "text",
+    "txt": "Last Name"
+  },
+  {
+    "id": 3,
+    "type": "email",
+    "txt": "Email Address"
+  },
+  {
+    "id": 4,
+    "type": "password",
+    "txt": "Password"
+  }
+]
