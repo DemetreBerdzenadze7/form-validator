@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-txt: #3d3b48;
+  --color-trial: #5e54a4;
+  --color-trial-2: #a6a1cf;
+  --color-light-trial: #bab7d4;
+  --color-submit: #38cc8b;
+  --color-light-submit: #77e2b3;
+  --color-error: #ff7979;
+}
+
+@layer base {
+  * {
+    padding: 0;
+    margin: 0;
+
+    box-sizing: border-box;
+  }
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 100vh;
+}
