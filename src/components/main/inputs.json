@@ -2,21 +2,25 @@
   {
     "id": 1,
     "type": "text",
+    "name": "firstName",
     "txt": "First Name"
   },
   {
     "id": 2,
     "type": "text",
+    "name": "lastName",
     "txt": "Last Name"
   },
   {
     "id": 3,
-    "type": "email",
+    "type": "text",
+    "name": "email",
     "txt": "Email Address"
   },
   {
     "id": 4,
     "type": "password",
+    "name": "password",
     "txt": "Password"
   }
 ]

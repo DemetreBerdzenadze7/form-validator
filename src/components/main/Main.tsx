@@ -2,29 +2,56 @@ import { useState } from "react";
 import inputs from "./inputs.json";
 
 const Main = () => {
-  const [isEmpty, setIsEmpty] = useState<number[]>([]);
-  const [isFull, setIsFull] = useState<number[]>([]);
-
-  function handleErrorInput(): void {
-    for (let data of inputs) {
-      if (!isFull.includes(data.id)) {
-        setIsEmpty((prev) => [...prev, data.id]);
-      }
-    }
+  interface Values {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
   }
 
-  function handleInputValue(e: string, id: number) {
-    if (e.length === 0 && isFull.includes(id)) {
-      setIsEmpty((prev) => [...prev, id]);
-      setIsFull((prev) => prev.filter((num) => num !== id));
-    } else {
-      setIsEmpty((prev) => prev.filter((num) => num !== id));
-      setIsFull((prev) => [...prev, id]);
-    }
+  const [values, setValues] = useState<Values>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+
+  interface Errors {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
   }
 
-  console.log(isEmpty);
+  const [errors, setErrors] = useState<Errors>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
 
+  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) {
+    setValues({ ...values, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: false });
+  }
+
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>): void {
+    e.preventDefault();
+    setErrors({
+      firstName: !values.firstName ? "First name cannot be empty" : "",
+      lastName: !values.lastName ? "Last name cannot be empty" : "",
+      email: !values.email
+        ? "Email cannot be empty"
+        : !emailRegex.test(values.email)
+          ? "Looks like this is not an email"
+          : "",
+      password: !values.password ? "Password cannot be empty" : "",
+    });
+  }
   return (
     <div className="flex flex-col">
       <button className="bg-trial text-white py-4.5 px-16.5 text-center rounded-[10px] max-w-118.5 text-[15px] font-medium leading-[1.73] tracking-[0.27px] hover:bg-trial-2  ">
@@ -32,41 +59,31 @@ const Main = () => {
         thereafter
       </button>
       <div className="bg-white p-6 mt-6 max-w-118.5 rounded-[10px] lg:px-10 lg:py-8">
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={(e) => {
-            for (let data of inputs) {
-              if (!isFull.includes(data.id)) {
-                e.preventDefault();
-              }
-            }
-          }}
-        >
+        <form className="flex flex-col gap-4" onSubmit={(e) => handleSubmit(e)}>
           {inputs.map((input) => (
             <div key={input.id} className="flex flex-col">
+              <label htmlFor={input.name}></label>
               <input
                 type={input.type}
                 placeholder={input.txt}
-                className={
-                  isEmpty.includes(input.id)
-                    ? "w-full border-2 border-error p-4 rounded-[5px] placeholder:text-txt text-txt outline-error bg-[url(/images/icon-error.svg)] bg-no-repeat bg-position-[right_1rem_center] "
-                    : "w-full border border-[#dedede] p-4 rounded-[5px] placeholder:text-txt text-txt"
-                }
-                onChange={(e) =>
-                  handleInputValue(e.target.value.trim(), input.id)
-                }
+                name={input.name}
+                id={input.name}
+                value={values[input.name as keyof Values]}
+                onChange={(e) => handleChange(e)}
+                className={`w-full border p-4 rounded-[5px] placeholder:text-txt text-txt ${
+                  errors[input.name as keyof Errors]
+                    ? "border-error"
+                    : "border-[#dedede]"
+                }`}
               />
-              <span className="self-end text-[11px] font-medium text-error italic leading-[1.55] ">
-                {isEmpty.includes(input.id)
-                  ? `${input.txt} cannot be empty`
-                  : null}
+              <span className="self-end text-[11px] font-medium text-error italic leading-[1.55]">
+                {errors[input.name as keyof Errors]}
               </span>
             </div>
           ))}
           <button
             type="submit"
             className="bg-submit text-[15px] text-white font-semibold py-4 tracking-[2px] leading-[1.75] hover:bg-light-submit rounded-[5px] "
-            onClick={() => handleErrorInput()}
           >
             CLAIM YOUR FREE TRIAL
           </button>
