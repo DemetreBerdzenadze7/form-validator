@@ -70,9 +70,9 @@ const Main = () => {
                 id={input.name}
                 value={values[input.name as keyof Values]}
                 onChange={(e) => handleChange(e)}
-                className={`w-full border p-4 rounded-[5px] placeholder:text-txt text-txt ${
+                className={`w-full border p-4 rounded-[5px] placeholder:text-txt text-txt   ${
                   errors[input.name as keyof Errors]
-                    ? "border-error"
+                    ? "border-error bg-[url(/images/icon-error.svg)] bg-no-repeat bg-position-[right_1rem_center] "
                     : "border-[#dedede]"
                 }`}
               />
