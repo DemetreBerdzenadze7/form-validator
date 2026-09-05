@@ -1,93 +1,112 @@
-# Intro Component – Sign Up Form
+# Intro Component with Sign Up Form
 
-A responsive sign-up form UI built as a Frontend Mentor challenge. The component includes real-time input validation, error state handling, and a clean two-column desktop layout.
+A responsive sign up form with client-side validation, built as a Frontend Mentor challenge.
 
 ---
 
-## 📁 Project Structure
+## Description
+
+This is a sign up form where users can register by entering their first name, last name, email address, and password. The form validates all fields on submit and shows contextual error messages per field. Errors clear as the user starts correcting them.
+
+---
+
+## Project Structure
 
 ```
 src/
 ├── components/
 │   ├── header/
-│   │   └── Header.tsx
+│   │   └── Header.tsx        # Left-side heading and description
 │   └── main/
-│       ├── Main.tsx
-│       └── inputs.json
-├── App.tsx
-├── index.css
-└── main.tsx
-public/
-└── images/
-    ├── bg-intro-mobile.png
-    ├── bg-intro-desktop.png
-    └── icon-error.svg
+│       ├── Main.tsx          # Form logic and rendering
+│       └── inputs.json       # Input field definitions (type, name, placeholder)
+├── App.tsx                   # Root layout
+└── index.css
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-| Technology          | Purpose                   |
-| ------------------- | ------------------------- |
-| **React 19**        | UI component framework    |
-| **TypeScript**      | Type-safe JavaScript      |
-| **Tailwind CSS v4** | Utility-first styling     |
-| **Vite**            | Build tool and dev server |
-
----
-
-## ⚙️ How It Works
-
-### Input State Management
-
-Two state arrays track the status of each input field:
-
-- `isEmpty` — holds IDs of fields that were submitted empty (triggers error styling)
-- `isFull` — holds IDs of fields that have been filled in
-
-### `handleInputValue(e, id)`
-
-Fires on every `onChange` event. If the user clears a previously filled field, it moves that field's ID from `isFull` back to `isEmpty`. If the user types something, it removes it from `isEmpty` and adds it to `isFull`.
-
-### `handleErrorInput()`
-
-Called when the submit button is clicked. Loops through all inputs and adds any unfilled field IDs to `isEmpty`, visually marking them as errors.
-
-### Form Validation
-
-The `onSubmit` handler prevents form submission if any input is not in the `isFull` array, ensuring all fields must be completed before proceeding.
-
-### Error UI
-
-When a field is in the `isEmpty` state:
-
-- The input gets a red border (`border-error`)
-- An error icon appears on the right side via a background image
-- An italic error message appears below the field (e.g. `"First Name cannot be empty"`)
+| Technology | Purpose |
+|---|---|
+| React | UI components |
+| TypeScript | Type safety |
+| Tailwind CSS | Styling |
+| Vite | Build tool |
 
 ---
 
-## 📦 Installation
+## How It Works
+
+### Controlled Inputs via JSON Config
+All input fields are defined in `inputs.json`. A single `map()` renders them all. `input.name` maps directly to both `Values` and `Errors` state keys using `as keyof Values` / `as keyof Errors`, so no input needs its own handler.
+
+### State Management
+Two state objects manage the form:
+- `values` — stores what the user types into each field
+- `errors` — stores an error message string per field (`""` means no error)
+
+```tsx
+const [values, setValues] = useState<Values>({
+  firstName: "", lastName: "", email: "", password: "",
+});
+
+const [errors, setErrors] = useState<Errors>({
+  firstName: "", lastName: "", email: "", password: "",
+});
+```
+
+### handleChange — Universal Change Handler
+One function handles all inputs. It updates the correct field using the input's `name` attribute and clears that field's error as the user starts typing.
+
+```tsx
+function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  setValues({ ...values, [e.target.name]: e.target.value });
+  setErrors({ ...errors, [e.target.name]: "" });
+}
+```
+
+### handleSubmit — Validation on Submit
+On submit, every field is validated. Empty fields get a "cannot be empty" message. Email gets an extra regex check — if it's filled in but invalid, it shows a different message.
+
+```tsx
+function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+  setErrors({
+    firstName: !values.firstName ? "First name cannot be empty" : "",
+    lastName: !values.lastName ? "Last name cannot be empty" : "",
+    email: !values.email
+      ? "Email cannot be empty"
+      : !emailRegex.test(values.email)
+        ? "Looks like this is not an email"
+        : "",
+    password: !values.password ? "Password cannot be empty" : "",
+  });
+}
+```
+
+### Error Display
+Each input has a `<span>` below it. Since errors are strings, an empty string `""` is falsy — so nothing renders when there's no error. When there is an error, the message appears and the input border turns red.
+
+```tsx
+<span>{errors[input.name as keyof Errors]}</span>
+```
+
+---
+
+## Installation
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/DemetreBerdzenadze7/<repo-name>.git
-
-# 2. Navigate into the project
-cd <repo-name>
-
-# 3. Install dependencies
+git clone https://github.com/DemetreBerdzenadze7/your-repo-name.git
+cd your-repo-name
 npm install
-
-# 4. Start the development server
 npm run dev
 ```
 
 ---
 
-## 👤 Author
+## Author
 
 **Demetre Berdzenadze**
-
-- GitHub: [@DemetreBerdzenadze7](https://github.com/DemetreBerdzenadze7)
+GitHub: [https://github.com/DemetreBerdzenadze7](https://github.com/DemetreBerdzenadze7)
